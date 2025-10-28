@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - Volvo Service</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .admin-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .admin-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .admin-form .form-label {
+            font-weight: bold;
+            color: #1a237e;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .admin-form .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .admin-btn {
+            background: #1a237e;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .admin-btn:hover {
+            background: #3949ab;
+        }
+        
+        .admin-btn.danger {
+            background: #dc3545;
+        }
+        
+        .admin-btn.danger:hover {
+            background: #c82333;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .inventory-table th,
+        .inventory-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .inventory-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #1a237e;
+        }
+        
+        .inventory-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .low-stock {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .adequate-stock {
+            color: #28a745;
+        }
+        
+        .result-message {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .current-inventory {
+            margin-top: 30px;
+        }
+        
+        .model-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+        }
+        
+        .model-header {
+            color: #1a237e;
+            border-bottom: 2px solid #3949ab;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1><i class="fas fa-cogs"></i> Inventory Management</h1>
+            <p>Volvo Service Center - Parts Inventory Control</p>
+            <a href="/" class="admin-btn" style="background: white; color: #1a237e; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Back to Main App
+            </a>
+        </div>
+
+        <!-- Update Inventory Section -->
+        <div class="admin-section">
+            <h2><i class="fas fa-edit"></i> Update Part Quantity</h2>
+            <form id="updateForm" class="admin-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Admin Key *</label>
+                        <input type="password" id="adminKey" class="form-input" required 
+                               placeholder="Enter admin password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Car Model *</label>
+                        <select id="carModel" class="form-input" required>
+                            <option value="">Select Model</option>
+                            <option value="XC90">XC90</option>
+                            <option value="XC60">XC60</option>
+                            <option value="XC40">XC40</option>
+                            <option value="S90">S90</option>
+                            <option value="V90">V90</option>
+                            <option value="S60">S60</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Part Name *</label>
+                        <input type="text" id="partName" class="form-input" required 
+                               placeholder="e.g., oil_filter, brake_pads">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">New Quantity *</label>
+                        <input type="number" id="quantity" class="form-input" required 
+                               min="0" placeholder="Enter new quantity">
+                    </div>
+                </div>
+                
+                <button type="submit" class="admin-btn">
+                    <i class="fas fa-save"></i> Update Inventory
+                </button>
+            </form>
+            
+            <div id="updateResult" class="result-message"></div>
+        </div>
+
+        <!-- Add New Part Section -->
+        <div class="admin-section">
+            <h2><i class="fas fa-plus-circle"></i> Add New Part</h2>
+            <form id="addPartForm" class="admin-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Admin Key *</label>
+                        <input type="password" id="addAdminKey" class="form-input" required 
+                               placeholder="Enter admin password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Car Model *</label>
+                        <select id="addCarModel" class="form-input" required>
+                            <option value="">Select Model</option>
+                            <option value="XC90">XC90</option>
+                            <option value="XC60">XC60</option>
+                            <option value="XC40">XC40</option>
+                            <option value="S90">S90</option>
+                            <option value="V90">V90</option>
+                            <option value="S60">S60</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Part Name *</label>
+                        <input type="text" id="addPartName" class="form-input" required 
+                               placeholder="e.g., transmission_fluid">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Initial Quantity *</label>
+                        <input type="number" id="addQuantity" class="form-input" required 
+                               min="0" value="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Minimum Threshold</label>
+                        <input type="number" id="minThreshold" class="form-input" 
+                               min="1" value="5" placeholder="Low stock alert level">
+                    </div>
+                </div>
+                
+                <button type="submit" class="admin-btn">
+                    <i class="fas fa-plus"></i> Add New Part
+                </button>
+            </form>
+            
+            <div id="addPartResult" class="result-message"></div>
+        </div>
+
+        <!-- Current Inventory Display -->
+        <div class="admin-section current-inventory">
+            <h2><i class="fas fa-boxes"></i> Current Inventory Status</h2>
+            <button onclick="loadCurrentInventory()" class="admin-btn">
+                <i class="fas fa-sync-alt"></i> Refresh Inventory
+            </button>
+            
+            <div id="inventoryDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        // Update Inventory Form
+        document.getElementById('updateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                admin_key: document.getElementById('adminKey').value,
+                car_model: document.getElementById('carModel').value,
+                part_name: document.getElementById('partName').value,
+                quantity: parseInt(document.getElementById('quantity').value)
+            };
+
+            try {
+                const response = await fetch('/api/admin/inventory/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('updateResult');
+                resultDiv.style.display = 'block';
+                
+                if (data.success) {
+                    resultDiv.className = 'result-message success';
+                    resultDiv.innerHTML = `✅ ${data.message}`;
+                    // Clear form
+                    document.getElementById('updateForm').reset();
+                    // Refresh inventory display
+                    loadCurrentInventory();
+                } else {
+                    resultDiv.className = 'result-message error';
+                    resultDiv.innerHTML = `❌ ${data.error}`;
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('updateResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-message error';
+                resultDiv.innerHTML = `❌ Network error: ${error.message}`;
+            }
+        });
+
+        // Add Part Form
+        document.getElementById('addPartForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                admin_key: document.getElementById('addAdminKey').value,
+                car_model: document.getElementById('addCarModel').value,
+                part_name: document.getElementById('addPartName').value,
+                quantity: parseInt(document.getElementById('addQuantity').value),
+                min_threshold: parseInt(document.getElementById('minThreshold').value)
+            };
+
+            try {
+                const response = await fetch('/api/admin/inventory/add-part', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('addPartResult');
+                resultDiv.style.display = 'block';
+                
+                if (data.success) {
+                    resultDiv.className = 'result-message success';
+                    resultDiv.innerHTML = `✅ ${data.message}`;
+                    // Clear form
+                    document.getElementById('addPartForm').reset();
+                    // Refresh inventory display
+                    loadCurrentInventory();
+                } else {
+                    resultDiv.className = 'result-message error';
+                    resultDiv.innerHTML = `❌ ${data.error}`;
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('addPartResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-message error';
+                resultDiv.innerHTML = `❌ Network error: ${error.message}`;
+            }
+        });
+
+        // Load Current Inventory
+        async function loadCurrentInventory() {
+            try {
+                const response = await fetch('/api/inventory');
+                const inventory = await response.json();
+                
+                const displayDiv = document.getElementById('inventoryDisplay');
+                let html = '';
+                
+                for (const [model, parts] of Object.entries(inventory)) {
+                    html += `<div class="model-section">
+                        <h3 class="model-header"><i class="fas fa-car"></i> ${model}</h3>
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Part Name</th>
+                                    <th>Current Quantity</th>
+                                    <th>Minimum Threshold</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    
+                    for (const [part, details] of Object.entries(parts)) {
+                        const isLowStock = details.quantity <= details.min_threshold;
+                        const statusClass = isLowStock ? 'low-stock' : 'adequate-stock';
+                        const statusText = isLowStock ? 'LOW STOCK' : 'Adequate';
+                        
+                        html += `<tr>
+                            <td><strong>${part.replace(/_/g, ' ').toUpperCase()}</strong></td>
+                            <td>${details.quantity}</td>
+                            <td>${details.min_threshold}</td>
+                            <td class="${statusClass}">${statusText}</td>
+                        </tr>`;
+                    }
+                    
+                    html += `</tbody></table></div>`;
+                }
+                
+                displayDiv.innerHTML = html || '<p>No inventory data available.</p>';
+                
+            } catch (error) {
+                document.getElementById('inventoryDisplay').innerHTML = 
+                    `<div class="result-message error">❌ Error loading inventory: ${error.message}</div>`;
+            }
+        }
+
+        // Load inventory when page loads
+        document.addEventListener('DOMContentLoaded', loadCurrentInventory);
+    </script>
+</body>
+</html>

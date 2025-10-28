@@ -329,3 +329,48 @@ class InventoryManager:
         except Exception as e:
             print(f"Error adding new model: {e}")
             return False
+        
+def update_part_quantity(self, car_model, part_name, new_quantity):
+    """Update quantity for a specific part"""
+    try:
+        if car_model not in self.inventory:
+            return False
+        
+        if part_name not in self.inventory[car_model]:
+            return False
+        
+        self.inventory[car_model][part_name]["quantity"] = new_quantity
+        
+        # Save to file
+        with open(self.inventory_file, 'w') as f:
+            json.dump(self.inventory, f, indent=2)
+        
+        print(f"Updated {part_name} for {car_model} to {new_quantity}")
+        return True
+        
+    except Exception as e:
+        print(f"Error updating inventory: {e}")
+        return False
+
+def add_part(self, car_model, part_name, quantity, min_threshold=5):
+    """Add new part to inventory"""
+    try:
+        if car_model not in self.inventory:
+            # Create new car model entry
+            self.inventory[car_model] = {}
+        
+        self.inventory[car_model][part_name] = {
+            "quantity": quantity,
+            "min_threshold": min_threshold
+        }
+        
+        # Save to file
+        with open(self.inventory_file, 'w') as f:
+            json.dump(self.inventory, f, indent=2)
+        
+        print(f"Added {part_name} to {car_model} inventory")
+        return True
+        
+    except Exception as e:
+        print(f"Error adding part: {e}")
+        return False        

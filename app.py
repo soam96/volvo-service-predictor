@@ -232,7 +232,77 @@ def not_found(error):
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
+# Add this import at the top
+import os
 
+# Add these routes after your existing routes
+@app.route('/admin/inventory')
+def admin_inventory():
+    """Admin inventory management page"""
+    return render_template('admin.html')
+
+@app.route('/api/admin/inventory/update', methods=['POST'])
+def update_inventory():
+    """Admin endpoint to update inventory"""
+    try:
+        data = request.get_json()
+        
+        # Simple authentication
+        admin_key = data.get('admin_key')
+        if admin_key != os.environ.get('ADMIN_KEY', 'volvo_admin_123'):
+            return jsonify({'error': 'Unauthorized: Invalid admin key'}), 401
+        
+        car_model = data.get('car_model')
+        part_name = data.get('part_name')
+        new_quantity = data.get('quantity')
+        
+        if not all([car_model, part_name, new_quantity is not None]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        success = inventory_manager.update_part_quantity(car_model, part_name, new_quantity)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': f'Updated {part_name} for {car_model} to {new_quantity}'
+            })
+        else:
+            return jsonify({'error': 'Update failed - check model and part name'}), 400
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/inventory/add-part', methods=['POST'])
+def add_new_part():
+    """Add new part to inventory"""
+    try:
+        data = request.get_json()
+        
+        # Simple authentication
+        admin_key = data.get('admin_key')
+        if admin_key != os.environ.get('ADMIN_KEY', 'volvo_admin_123'):
+            return jsonify({'error': 'Unauthorized: Invalid admin key'}), 401
+        
+        car_model = data.get('car_model')
+        part_name = data.get('part_name')
+        quantity = data.get('quantity')
+        min_threshold = data.get('min_threshold', 5)
+        
+        if not all([car_model, part_name, quantity is not None]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        success = inventory_manager.add_part(car_model, part_name, quantity, min_threshold)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': f'Added {part_name} to {car_model} inventory with quantity {quantity}'
+            })
+        else:
+            return jsonify({'error': 'Add part failed'}), 400
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('DEBUG', 'False').lower() == 'true'
