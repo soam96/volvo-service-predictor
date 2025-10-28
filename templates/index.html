@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volvo Service Time Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Animated Background -->
+        <div class="animated-bg">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <h1>Volvo Service Time Predictor</h1>
+                <p>India Service Center - Accurate Service Time Predictions</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="form-section">
+                <div class="section-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h2>Service Details</h2>
+                </div>
+                
+                <form id="serviceForm" class="service-form">
+                    <!-- Car Number Plate -->
+                    <div class="form-group">
+                        <label for="car_number_plate" class="form-label">
+                            <i class="fas fa-id-card"></i>
+                            Car Number Plate
+                        </label>
+                        <input type="text" id="car_number_plate" name="car_number_plate" 
+                               placeholder="e.g., MH12AB1234" required class="form-input">
+                        <small class="form-hint">Format: MH12AB1234</small>
+                    </div>
+
+                    <!-- Car Model -->
+                    <div class="form-group">
+                        <label for="car_model" class="form-label">
+                            <i class="fas fa-car-side"></i>
+                            Car Model
+                        </label>
+                        <select id="car_model" name="car_model" required class="form-input">
+                            <option value="">Select Model</option>
+                            <option value="XC90">XC90</option>
+                            <option value="XC60">XC60</option>
+                            <option value="XC40">XC40</option>
+                            <option value="S90">S90</option>
+                            <option value="V90">V90</option>
+                            <option value="S60">S60</option>
+                        </select>
+                    </div>
+
+                    <!-- Manufacture Year -->
+                    <div class="form-group">
+                        <label for="manufacture_year" class="form-label">
+                            <i class="fas fa-calendar-alt"></i>
+                            Manufacture Year
+                        </label>
+                        <input type="number" id="manufacture_year" name="manufacture_year" 
+                               placeholder="2020" min="2000" max="2024" required class="form-input">
+                    </div>
+
+                    <!-- Fuel Type -->
+                    <div class="form-group">
+                        <label for="fuel_type" class="form-label">
+                            <i class="fas fa-gas-pump"></i>
+                            Fuel Type
+                        </label>
+                        <select id="fuel_type" name="fuel_type" required class="form-input">
+                            <option value="">Select Fuel Type</option>
+                            <option value="petrol">Petrol</option>
+                            <option value="diesel">Diesel</option>
+                            <option value="hybrid">Hybrid</option>
+                            <option value="electric">Electric</option>
+                        </select>
+                    </div>
+
+                    <!-- Service Type -->
+                    <div class="form-group">
+                        <label for="service_type" class="form-label">
+                            <i class="fas fa-tools"></i>
+                            Service Type
+                        </label>
+                        <select id="service_type" name="service_type" required class="form-input">
+                            <option value="">Select Service Type</option>
+                            <option value="general">General Service</option>
+                            <option value="basic">Basic Service</option>
+                            <option value="standard">Standard Service</option>
+                            <option value="premium">Premium Service</option>
+                            <option value="major">Major Service</option>
+                        </select>
+                    </div>
+
+                    <!-- Last Service Date -->
+                    <div class="form-group">
+                        <label for="last_service_date" class="form-label">
+                            <i class="fas fa-calendar-check"></i>
+                            Last Service Date
+                        </label>
+                        <input type="date" id="last_service_date" name="last_service_date" 
+                               class="form-input" max="">
+                        <small class="form-hint">Select the date of last service</small>
+                        <div class="calculated-days" id="calculatedDays">
+                            <i class="fas fa-calculator"></i>
+                            <span id="daysSinceLastService">0</span> days since last service
+                        </div>
+                    </div>
+
+                    <!-- Total Kilometers -->
+                    <div class="form-group">
+                        <label for="total_kilometers" class="form-label">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Total Kilometers
+                        </label>
+                        <input type="number" id="total_kilometers" name="total_kilometers" 
+                               placeholder="50000" min="0" required class="form-input">
+                    </div>
+
+                    <!-- KM Since Last Service -->
+                    <div class="form-group">
+                        <label for="km_since_last_service" class="form-label">
+                            <i class="fas fa-road"></i>
+                            KM Since Last Service
+                        </label>
+                        <input type="number" id="km_since_last_service" name="km_since_last_service" 
+                               placeholder="5000" min="0" required class="form-input">
+                    </div>
+
+                    <!-- Service Tasks Selection -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tasks"></i>
+                            Select Service Tasks
+                        </label>
+                        <small class="form-hint">Choose the tasks you want to perform</small>
+                        
+                        <div class="tasks-container" id="tasksContainer">
+                            <!-- Engine & Performance Tasks -->
+                            <div class="task-category">
+                                <h4 class="category-title">
+                                    <i class="fas fa-cog"></i> Engine & Performance
+                                </h4>
+                                <div class="task-options">
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="oil_change" data-time="0.5">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Engine Oil Change</strong>
+                                            <small>Replace engine oil and filter</small>
+                                        </span>
+                                    </label>
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="air_filter" data-time="0.3">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Air Filter Replacement</strong>
+                                            <small>Replace cabin and engine air filters</small>
+                                        </span>
+                                    </label>
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="spark_plugs" data-time="1.0">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Spark Plugs Replacement</strong>
+                                            <small>Replace all spark plugs</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Brakes & Safety Tasks -->
+                            <div class="task-category">
+                                <h4 class="category-title">
+                                    <i class="fas fa-stop-circle"></i> Brakes & Safety
+                                </h4>
+                                <div class="task-options">
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="brake_pads" data-time="1.5">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Brake Pads Replacement</strong>
+                                            <small>Replace front and rear brake pads</small>
+                                        </span>
+                                    </label>
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="brake_fluid" data-time="0.5">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Brake Fluid Change</strong>
+                                            <small>Flush and replace brake fluid</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Wheels & Alignment Tasks -->
+                            <div class="task-category">
+                                <h4 class="category-title">
+                                    <i class="fas fa-tachometer-alt"></i> Wheels & Alignment
+                                </h4>
+                                <div class="task-options">
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="wheel_alignment" data-time="1.0">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Wheel Alignment</strong>
+                                            <small>Four-wheel alignment service</small>
+                                        </span>
+                                    </label>
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="tire_rotation" data-time="0.5">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>Tire Rotation</strong>
+                                            <small>Rotate all four tires</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- AC & Cooling Tasks -->
+                            <div class="task-category">
+                                <h4 class="category-title">
+                                    <i class="fas fa-snowflake"></i> AC & Cooling System
+                                </h4>
+                                <div class="task-options">
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="ac_service" data-time="1.5">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>AC Service</strong>
+                                            <small>AC gas top-up and system check</small>
+                                        </span>
+                                    </label>
+                                    <label class="task-option">
+                                        <input type="checkbox" name="tasks" value="ac_filter" data-time="0.3">
+                                        <span class="checkmark"></span>
+                                        <span class="task-info">
+                                            <strong>AC Filter Replacement</strong>
+                                            <small>Replace cabin AC filter</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Tasks Summary -->
+                        <div class="selected-tasks-summary" id="selectedTasksSummary">
+                            <div class="summary-header">
+                                <i class="fas fa-list-check"></i>
+                                <span>Selected Tasks:</span>
+                                <span id="selectedTasksCount">0 tasks</span>
+                            </div>
+                            <div class="tasks-list" id="tasksList"></div>
+                            <div class="total-time" id="totalTime">Estimated time: 0 hours</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Predict Service Time</span>
+                        <div class="btn-loader">
+                            <div class="loader-spinner"></div>
+                            <span>Predicting...</span>
+                        </div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection">
+                <div class="section-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Prediction Results</h2>
+                </div>
+                
+                <div class="result-card" id="resultCard">
+                    <div class="result-placeholder">
+                        <i class="fas fa-car-battery"></i>
+                        <p>Submit service details to get prediction</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h3>Analyzing Service Details</h3>
+                <p>Please wait while we calculate your service time...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

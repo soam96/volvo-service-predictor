@@ -1,0 +1,182 @@
+{
+  "XC90": {
+    "oil_filter": {
+      "quantity": 15,
+      "min_threshold": 5
+    },
+    "air_filter": {
+      "quantity": 12,
+      "min_threshold": 4
+    },
+    "fuel_filter": {
+      "quantity": 8,
+      "min_threshold": 3
+    },
+    "brake_pads": {
+      "quantity": 20,
+      "min_threshold": 6
+    },
+    "spark_plugs": {
+      "quantity": 25,
+      "min_threshold": 8
+    },
+    "battery": {
+      "quantity": 10,
+      "min_threshold": 3
+    },
+    "engine_oil": {
+      "quantity": 30,
+      "min_threshold": 10
+    }
+  },
+  "XC60": {
+    "oil_filter": {
+      "quantity": 18,
+      "min_threshold": 6
+    },
+    "air_filter": {
+      "quantity": 15,
+      "min_threshold": 5
+    },
+    "fuel_filter": {
+      "quantity": 10,
+      "min_threshold": 4
+    },
+    "brake_pads": {
+      "quantity": 22,
+      "min_threshold": 7
+    },
+    "spark_plugs": {
+      "quantity": 28,
+      "min_threshold": 9
+    },
+    "battery": {
+      "quantity": 12,
+      "min_threshold": 4
+    },
+    "engine_oil": {
+      "quantity": 35,
+      "min_threshold": 12
+    }
+  },
+  "XC40": {
+    "oil_filter": {
+      "quantity": 20,
+      "min_threshold": 7
+    },
+    "air_filter": {
+      "quantity": 18,
+      "min_threshold": 6
+    },
+    "fuel_filter": {
+      "quantity": 12,
+      "min_threshold": 4
+    },
+    "brake_pads": {
+      "quantity": 25,
+      "min_threshold": 8
+    },
+    "spark_plugs": {
+      "quantity": 30,
+      "min_threshold": 10
+    },
+    "battery": {
+      "quantity": 15,
+      "min_threshold": 5
+    },
+    "engine_oil": {
+      "quantity": 40,
+      "min_threshold": 15
+    }
+  },
+  "S90": {
+    "oil_filter": {
+      "quantity": 12,
+      "min_threshold": 4
+    },
+    "air_filter": {
+      "quantity": 10,
+      "min_threshold": 3
+    },
+    "fuel_filter": {
+      "quantity": 6,
+      "min_threshold": 2
+    },
+    "brake_pads": {
+      "quantity": 18,
+      "min_threshold": 6
+    },
+    "spark_plugs": {
+      "quantity": 22,
+      "min_threshold": 7
+    },
+    "battery": {
+      "quantity": 8,
+      "min_threshold": 3
+    },
+    "engine_oil": {
+      "quantity": 25,
+      "min_threshold": 8
+    }
+  },
+  "V90": {
+    "oil_filter": {
+      "quantity": 14,
+      "min_threshold": 5
+    },
+    "air_filter": {
+      "quantity": 11,
+      "min_threshold": 4
+    },
+    "fuel_filter": {
+      "quantity": 7,
+      "min_threshold": 3
+    },
+    "brake_pads": {
+      "quantity": 19,
+      "min_threshold": 6
+    },
+    "spark_plugs": {
+      "quantity": 24,
+      "min_threshold": 8
+    },
+    "battery": {
+      "quantity": 9,
+      "min_threshold": 3
+    },
+    "engine_oil": {
+      "quantity": 28,
+      "min_threshold": 9
+    }
+  },
+  "S60": {
+    "oil_filter": {
+      "quantity": 16,
+      "min_threshold": 6
+    },
+    "air_filter": {
+      "quantity": 13,
+      "min_threshold": 5
+    },
+    "fuel_filter": {
+      "quantity": 9,
+      "min_threshold": 3
+    },
+    "brake_pads": {
+      "quantity": 21,
+      "min_threshold": 7
+    },
+    "spark_plugs": {
+      "quantity": 26,
+      "min_threshold": 9
+    },
+    "battery": {
+      "quantity": 11,
+      "min_threshold": 4
+    },
+    "engine_oil": {
+      "quantity": 32,
+      "min_threshold": 11
+    }
+  }
+}
