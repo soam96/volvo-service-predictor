@@ -1,15 +1,8 @@
 import numpy as np
-import joblib
-import os
 import random
 
 class ServiceTimePredictor:
     def __init__(self):
-        self.model = None
-        self._initialize_model()
-    
-    def _initialize_model(self):
-        """Initialize the prediction model"""
         pass
     
     def predict(self, features):
@@ -60,8 +53,8 @@ class ServiceTimePredictor:
         # Adjust based on car age (older cars take longer)
         current_year = 2024
         car_age = current_year - features['manufacture_year']
-        year_factor = 1 + (car_age * 0.08)  # 8% increase per year
-        base_time *= min(year_factor, 2.0)  # Max 2x for very old cars
+        year_factor = 1 + (car_age * 0.08)
+        base_time *= min(year_factor, 2.0)
         
         # Adjust based on kilometers
         km_factor = 1 + (features['total_kilometers'] / 100000) * 0.3
@@ -82,18 +75,18 @@ class ServiceTimePredictor:
         
         # Adjust based on worker availability
         if features['worker_availability'] <= 1:
-            worker_factor = 1.4  # Very high workload
+            worker_factor = 1.4
         elif features['worker_availability'] <= 3:
-            worker_factor = 1.2  # High workload
+            worker_factor = 1.2
         elif features['worker_availability'] <= 5:
-            worker_factor = 1.0  # Normal workload
+            worker_factor = 1.0
         else:
-            worker_factor = 0.9  # Low workload
+            worker_factor = 0.9
         
         base_time *= worker_factor
         
         # Add some realistic random variation
-        variation = np.random.normal(0, 0.15)
+        variation = random.uniform(-0.2, 0.2)
         predicted_time = max(1.0, base_time + variation)
         
         return round(predicted_time, 1)

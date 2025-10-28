@@ -29,7 +29,7 @@ def validate_inputs(data):
         last_service_days = int(data['last_service_days'])
         if last_service_days < 0:
             return {'valid': False, 'error': 'Last service days cannot be negative'}
-        if last_service_days > 3650:  # 10 years max
+        if last_service_days > 3650:
             return {'valid': False, 'error': 'Last service date seems too far in the past'}
         
         total_kms = int(data['total_kilometers'])

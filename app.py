@@ -3,9 +3,9 @@ from flask_cors import CORS
 import os
 import json
 import numpy as np
-import pandas as pd
+
 from datetime import datetime
-import joblib
+
 
 # Import utility modules
 from utils.data_validator import validate_inputs, validate_number_plate
